@@ -28,6 +28,8 @@ def main(_):
                                online_eval_interval = 25000,
                                unsquash_actions=False,
                                normalize_returns=True,
+                               sample_implicit_policy=False, #Parameters for (1) finetuning, change both to true for our (2) Fine tuning version
+                               train_actor_finetuning=False,
                                training_time_inference_params=dict(
                                 N = 64,
                                 clip_sampler = True,
@@ -48,10 +50,8 @@ def main(_):
                                    critic_objective='expectile',
                                    beta_schedule='vp',
                                    actor_objective='bc',
-                                   decay_steps=int(2e6),
+                                   decay_steps=int(2e6), #Change this to int(4e6) for (2) (because you are finetuning actor)
                                    actor_layer_norm=True,
-                                   sample_implicit_policy=False, #Parameters for (1) finetuning, change both to true for our (2) Fine tuning version
-                                   train_actor_finetuning=False,
                                ))
 
     sweep_parameters = dict(

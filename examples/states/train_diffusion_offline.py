@@ -3,7 +3,7 @@ import jax
 import wandb
 from tqdm import tqdm
 from flax.core import frozen_dict
-from jaxrl5.agents import BCLearner, IQLLearner, DDPMIQLLearner, DiffusionQLLearner
+from jaxrl5.agents import BCLearner, IQLLearner, DDPMIQLLearner
 from jaxrl5.data.d4rl_datasets import D4RLDataset
 from jaxrl5.evaluation import evaluate, implicit_evaluate
 from jaxrl5.wrappers import wrap_gym
