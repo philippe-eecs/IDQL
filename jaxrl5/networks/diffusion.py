@@ -67,27 +67,6 @@ class DDPM(nn.Module):
 
         return self.reverse_encoder_cls()(reverse_input, training=training)
 
-class AttnScoreNetwork(nn.Module):
-    data_dim: int
-    time_preprocess_cls: Type[nn.Module]
-    cond_encoder_cls: Type[nn.Module]
-
-    @nn.compact
-    def __call__(self, s, a, time, training = False):
-        t_ff = self.time_preprocess_cls()(time)
-        t_ff = jnp.concatenate([s, t_ff], axis=-1)
-        t_ff = self.cond_encoder_cls()(t_ff, training = training)
-
-        #z = jnp.concatenate([a, s], axis=-1)
-        z = nn.Dense(256)(a)
-        h = Encoder()(z, t_ff)
-
-        h = nn.LayerNorm()(h)
-        h = nn.swish(h)
-        h = nn.Dense(self.data_dim)(h)
-
-        return h
-
 @partial(jax.jit, static_argnames=('actor_apply_fn', 'act_dim', 'T', 'repeat_last_step', 'clip_sampler', 'training'))
 def ddpm_sampler(actor_apply_fn, actor_params, T, rng, act_dim, observations, alphas, alpha_hats, betas, sample_temperature, repeat_last_step, clip_sampler, training = False):
 
@@ -97,7 +76,6 @@ def ddpm_sampler(actor_apply_fn, actor_params, T, rng, act_dim, observations, al
         current_x, rng = input_tuple
         
         input_time = jnp.expand_dims(jnp.array([time]).repeat(current_x.shape[0]), axis = 1)
-        #actor_input = jnp.concatenate([observations, current_x], axis = -1)
         eps_pred = actor_apply_fn({"params": actor_params}, observations, current_x, input_time, training = training)
 
         alpha_1 = 1 / jnp.sqrt(alphas[time])

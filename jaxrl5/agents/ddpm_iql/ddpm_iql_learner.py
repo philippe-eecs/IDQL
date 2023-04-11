@@ -11,7 +11,7 @@ from flax import struct
 import numpy as np
 from jaxrl5.agents.agent import Agent
 from jaxrl5.data.dataset import DatasetDict
-from jaxrl5.networks import MLP, Ensemble, StateActionValue, StateValue, DDPM, FourierFeatures, cosine_beta_schedule, ddpm_sampler, MLPResNetV3, get_weight_decay_mask, vp_beta_schedule
+from jaxrl5.networks import MLP, Ensemble, StateActionValue, StateValue, DDPM, FourierFeatures, cosine_beta_schedule, ddpm_sampler, MLPResNet, get_weight_decay_mask, vp_beta_schedule
 from jaxrl5.networks.diffusion import AttnScoreNetwork
 
 def expectile_loss(diff, expectile=0.8):
@@ -139,7 +139,7 @@ class DDPMIQLLearner(Agent):
 
         elif actor_architecture == 'ln_resnet':
 
-            base_model_cls = partial(MLPResNetV3,
+            base_model_cls = partial(MLPResNet,
                                      use_layer_norm=actor_layer_norm,
                                      num_blocks=actor_num_blocks,
                                      dropout_rate=actor_dropout_rate,
@@ -160,7 +160,6 @@ class DDPMIQLLearner(Agent):
             raise ValueError(f'Invalid actor architecture: {actor_architecture}')
         
         time = jnp.zeros((1, 1))
-        #input = jnp.expand_dims(jnp.concatenate([observations, actions]), axis = 0)
         observations = jnp.expand_dims(observations, axis = 0)
         actions = jnp.expand_dims(actions, axis = 0)
         actor_params = actor_def.init(actor_key, observations, actions,
@@ -379,7 +378,6 @@ class DDPMIQLLearner(Agent):
         actions, rng = ddpm_sampler(self.score_model.apply_fn, score_params, self.T, rng, self.act_dim, observations, self.alphas, self.alpha_hats, self.betas, self.ddpm_temperature, self.M, self.clip_sampler)
         rng, key = jax.random.split(rng, 2)
         qs = compute_q(self.target_critic.apply_fn, self.target_critic.params, observations, actions)
-        #vs = compute_v(self.value.apply_fn, self.value.params, observations)
         idx = jnp.argmax(qs)
         action = actions[idx]
         new_rng = rng
