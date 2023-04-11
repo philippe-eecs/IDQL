@@ -3,6 +3,8 @@ import flax.linen as nn
 import jax.numpy as jnp
 import flax
 
+default_init = nn.initializers.xavier_uniform
+
 class MLPResNetBlock(nn.Module):
     """MLPResNet block."""
     features: int
