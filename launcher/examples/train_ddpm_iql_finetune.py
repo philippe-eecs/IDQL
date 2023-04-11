@@ -62,7 +62,7 @@ def main(_):
     
 
     variants = [constant_parameters]
-    name_keys = ['experiment_name', 'env_name', 'sample_implicit_policy', 'train_actor_finetuning', 'actor_objective']
+    name_keys = ['experiment_name', 'env_name']
     variants = set_hyperparameters(sweep_parameters, variants, name_keys)
 
     inference_sweep_parameters = dict(
