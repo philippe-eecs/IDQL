@@ -3,7 +3,6 @@ from typing import Callable, Optional, Sequence, Type
 import flax.linen as nn
 import jax.numpy as jnp
 import jax
-from jaxrl5.networks.mlp import Encoder
 
 def cosine_beta_schedule(timesteps, s = 0.008):
     """

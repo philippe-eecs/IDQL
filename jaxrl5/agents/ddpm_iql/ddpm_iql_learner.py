@@ -150,12 +150,6 @@ class DDPMIQLLearner(Agent):
                              cond_encoder_cls=cond_model_cls,
                              reverse_encoder_cls=base_model_cls)
 
-        elif actor_architecture == 'trans_resnet':
-
-            actor_def = AttnScoreNetwork(time_preprocess_cls=preprocess_time_cls,
-                                         data_dim=action_dim,
-                                         cond_encoder_cls=cond_model_cls)
-
         else:
             raise ValueError(f'Invalid actor architecture: {actor_architecture}')
         
@@ -398,12 +392,17 @@ class DDPMIQLLearner(Agent):
         vs = compute_v(self.value.apply_fn, self.value.params, observations)
         adv = qs - vs
 
-        if self.critic_objective == 'expectile' or self.critic_objective == 'quantile':
-            tau_weights = jnp.where(adv > 0, self.critic_hyperparam, 1 - self.critic_hyperparam) #Assumes log beta(a|s) is uniform, which is not generally true...
+        if self.critic_objective == 'expectile':
+            tau_weights = jnp.where(adv > 0, self.critic_hyperparam, 1 - self.critic_hyperparam)
+            sample_idx = jax.random.choice(key, self.N, p = tau_weights/tau_weights.sum())
+            action = actions[sample_idx]
+        elif self.critic_objective == 'quantile':
+            tau_weights = jnp.where(adv > 0, self.critic_hyperparam, 1 - self.critic_hyperparam)
+            tau_weights = tau_weights / adv
             sample_idx = jax.random.choice(key, self.N, p = tau_weights/tau_weights.sum())
             action = actions[sample_idx]
         elif self.critic_objective == 'exponential':
-            weights = jax.nn.softmax(adv * self.critic_hyperparam) #Is log normalized, so should be correct
+            weights = self.critic_hyperparam * jnp.abs(adv * self.critic_hyperparam)/jnp.abs(adv)
             sample_idx = jax.random.choice(key, self.N, p = weights)
             action = actions[sample_idx]
         else:
