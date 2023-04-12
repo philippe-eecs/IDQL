@@ -8,8 +8,10 @@ Run python3 launcher/examples/train_ddpm_iql_offline.py --variant 0...N
 
 [Finetune.](launcher/examples/train_ddpm_iql_finetune.py)
 
-Run python3 launcher/examples/train_ddpm_iql_finetune.py --variant 0...N
-
+Run 
+```
+python3 launcher/examples/train_ddpm_iql_finetune.py --variant 0...N
+```
 Specific File Paths that are Important
 
 [Main run script were variant dictionary is passed.](/examples/states/train_diffusion_offline.py)
@@ -33,13 +35,6 @@ pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases
 ```
 
 See instructions for other versions of CUDA [here](https://github.com/google/jax#pip-installation-gpu-cuda).
-
-## Examples
-
-[Here.](examples/)
-
-## Tests
-
-```bash
-MUJOCO_GL=egl CUDA_VISIBLE_DEVICES= pytest tests
 ```
+
+Based from a re-implementation of https://github.com/ikostrikov/jaxrl 
