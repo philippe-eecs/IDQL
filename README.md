@@ -1,10 +1,15 @@
 IDQL Implementation REPO!
+Make sure you setup your Wandb key and pip install requirements
+
 
 ## Reproducing Results
 
 [Offline.](launcher/examples/train_ddpm_iql_offline.py)
 
-Run python3 launcher/examples/train_ddpm_iql_offline.py --variant 0...N
+Run
+```
+python3 launcher/examples/train_ddpm_iql_offline.py --variant 0...N
+```
 
 [Finetune.](launcher/examples/train_ddpm_iql_finetune.py)
 
