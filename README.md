@@ -1,16 +1,14 @@
 IDQL Implementation REPO!
 
-To reproduce results go to 
-
 ## Reproducing Results
 
 [Offline.](launcher/examples/train_ddpm_iql_offline.py)
 
-Run python3 launcher/examples/train_ddpm_iql_offline.py --variant 0
+Run python3 launcher/examples/train_ddpm_iql_offline.py --variant 0...N
 
 [Finetune.](launcher/examples/train_ddpm_iql_finetune.py)
 
-Run python3 launcher/examples/train_ddpm_iql_finetune.py --variant 0
+Run python3 launcher/examples/train_ddpm_iql_finetune.py --variant 0...N
 
 Specific File Paths that are Important
 
