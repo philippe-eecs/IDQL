@@ -6,7 +6,21 @@ To reproduce results go to
 
 [Offline.](launcher/examples/train_ddpm_iql_offline.py)
 
+Run python3 launcher/examples/train_ddpm_iql_offline.py --variant 0
+
 [Finetune.](launcher/examples/train_ddpm_iql_finetune.py)
+
+Run python3 launcher/examples/train_ddpm_iql_finetune.py --variant 0
+
+Specific File Paths that are Important
+
+[Main run script were variant dictionary is passed.](/examples/states/train_diffusion_offline.py)
+
+[DDPM Implementation.](/jaxrl5/networks/diffusion.py)
+
+[LN_Resnet.](/jaxrl5/networks/resnet.py)
+
+[DDPM IQL Learner.](/jaxrl5/agents/ddpm_iql/ddpm_iql_learner.py)
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/ikostrikov/jaxrl5/tree/main.svg?style=svg&circle-token=668374ebe0f27c7ee70edbdfbbd1dd928725c01a)](https://dl.circleci.com/status-badge/redirect/gh/ikostrikov/jaxrl5/tree/main) [![codecov](https://codecov.io/gh/ikostrikov/jaxrl5/branch/main/graph/badge.svg?token=Q5QMIDZNZ3)](https://codecov.io/gh/ikostrikov/jaxrl5)
 
