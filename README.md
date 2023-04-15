@@ -40,6 +40,17 @@ pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases
 ```
 
 See instructions for other versions of CUDA [here](https://github.com/google/jax#pip-installation-gpu-cuda).
-```
 
 Based from a re-implementation of https://github.com/ikostrikov/jaxrl 
+
+Please Cite the JAXRL repo as well if you use this repo
+```
+@misc{jaxrl,
+  author = {Kostrikov, Ilya},
+  doi = {10.5281/zenodo.5535154},
+  month = {10},
+  title = {{JAXRL: Implementations of Reinforcement Learning algorithms in JAX}},
+  url = {https://github.com/ikostrikov/jaxrl},
+  year = {2021}
+}
+```
