@@ -1,23 +1,25 @@
-IDQL Implementation REPO!
-Make sure you setup your Wandb key and pip install requirements
+# IDQL: Implicit Q-Learning as an Actor-Critic Method with Diffusion Policies
 
+Paper Link : https://arxiv.org/abs/2304.10573
 
-## Reproducing Results
+# Reproducing Results
 
-[Offline.](launcher/examples/train_ddpm_iql_offline.py)
+[Offline Script Location.](launcher/examples/train_ddpm_iql_offline.py)
 
-Run
+Run Line for each variant. Edit the script location above to change hyperparameters and environments to sweep over. 
+
 ```
 python3 launcher/examples/train_ddpm_iql_offline.py --variant 0...N
 ```
 
-[Finetune.](launcher/examples/train_ddpm_iql_finetune.py)
+[Finetune Script Location.](launcher/examples/train_ddpm_iql_finetune.py)
 
 Run 
 ```
 python3 launcher/examples/train_ddpm_iql_finetune.py --variant 0...N
 ```
-Specific File Paths that are Important
+
+# Important File Locations
 
 [Main run script were variant dictionary is passed.](/examples/states/train_diffusion_offline.py)
 
@@ -29,12 +31,11 @@ Specific File Paths that are Important
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/ikostrikov/jaxrl5/tree/main.svg?style=svg&circle-token=668374ebe0f27c7ee70edbdfbbd1dd928725c01a)](https://dl.circleci.com/status-badge/redirect/gh/ikostrikov/jaxrl5/tree/main) [![codecov](https://codecov.io/gh/ikostrikov/jaxrl5/branch/main/graph/badge.svg?token=Q5QMIDZNZ3)](https://codecov.io/gh/ikostrikov/jaxrl5)
 
-## Installation
+# Installation
 
 Run
 ```bash
 pip install --upgrade pip
-
 pip install -e .
 pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
 ```
@@ -43,7 +44,20 @@ See instructions for other versions of CUDA [here](https://github.com/google/jax
 
 Based from a re-implementation of https://github.com/ikostrikov/jaxrl 
 
-Please Cite the JAXRL repo as well if you use this repo
+#Citations
+Cite this paper
+```
+@misc{hansenestruch2023idql,
+      title={IDQL: Implicit Q-Learning as an Actor-Critic Method with Diffusion Policies}, 
+      author={Philippe Hansen-Estruch and Ilya Kostrikov and Michael Janner and Jakub Grudzien Kuba and Sergey Levine},
+      year={2023},
+      eprint={2304.10573},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+```
+
+Please also cite the JAXRL repo as well if you use this repo
 ```
 @misc{jaxrl,
   author = {Kostrikov, Ilya},
