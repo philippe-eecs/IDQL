@@ -2,6 +2,8 @@
 
 Paper Link : https://arxiv.org/abs/2304.10573
 
+Check out https://github.com/philippe-eecs/JaxDDPM for an implementation of DDPMs in JAX for continuous spaces!
+
 # Reproducing Results
 
 [Offline Script Location.](launcher/examples/train_ddpm_iql_offline.py)
