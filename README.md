@@ -44,7 +44,7 @@ See instructions for other versions of CUDA [here](https://github.com/google/jax
 
 Based from a re-implementation of https://github.com/ikostrikov/jaxrl 
 
-#Citations
+# Citations
 Cite this paper
 ```
 @misc{hansenestruch2023idql,
