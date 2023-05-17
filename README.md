@@ -38,7 +38,7 @@ python3 launcher/examples/train_ddpm_iql_finetune.py --variant 0...N
 Run
 ```bash
 pip install --upgrade pip
-pip install -e .
+pip install -r requirements.txt
 pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
 ```
 
