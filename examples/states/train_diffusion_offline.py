@@ -82,10 +82,10 @@ def call_main(details):
         agent, info = agent.update(sample)
         
         if i % details['log_interval'] == 0:
-            val_sample = ds_val.sample(details['batch_size'], keys=keys)
-            agent, val_info = agent.eval_loss(val_sample)
+            #val_sample = ds_val.sample(details['batch_size'], keys=keys)
+            #agent, val_info = agent.eval_loss(val_sample)
             wandb.log({f"train/{k}": v for k, v in info.items()}, step=i)
-            wandb.log({f"val/{k}": v for k, v in val_info.items()}, step=i)
+            #wandb.log({f"val/{k}": v for k, v in val_info.items()}, step=i)
         
         if i % details['eval_interval'] == 0 and i > 0:
             for inference_params in details['inference_variants']:
@@ -99,13 +99,14 @@ def call_main(details):
             
             agent.replace(**details['training_time_inference_params'])
             
+            '''
             eval_info = implicit_evaluate(agent, env, details['eval_episodes'], save_video=details['save_video'])
             if 'binary' not in details['env_name']:
                 eval_info["return"] = env.get_normalized_score(eval_info["return"]) * 100.0
             wandb.log({f"eval/implicit_{k}": v for k, v in eval_info.items()}, step=i)
+            '''
             
             
-    
     if details['online_max_steps'] > 0:
         online_replay_buffer = ReplayBuffer(env.observation_space, env.action_space,
                                     details['online_max_steps'])

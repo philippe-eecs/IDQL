@@ -1,7 +1,6 @@
-gym[mujoco] >= 0.21.0, < 0.24.1
+gym[mujoco] >= 0.21.0, < 0.24.0
 numpy >= 1.20.2
 dm_control >= 1.0.0
-jax >= 0.3.13
 flax >= 0.5.2
 ml_collections >= 0.1.0
 tqdm >= 4.60.0
@@ -13,3 +12,4 @@ tensorflow-probability >= 0.17.0
 dmcgym @ git+https://github.com/ikostrikov/dmcgym
 moviepy
 imageio
+d4rl @ git+https://github.com/Farama-Foundation/d4rl@master#egg=d4rl

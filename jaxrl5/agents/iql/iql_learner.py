@@ -4,13 +4,15 @@ import math
 from functools import partial
 from typing import Dict, Optional, Sequence, Tuple, Union
 
+import numpy as np
+
 import gym
 import jax
 import jax.numpy as jnp
 import optax
 from flax.training.train_state import TrainState
 
-from jaxrl5.agents.agent import Agent
+from jaxrl5.agents.agent import Agent, _sample_actions
 from jaxrl5.data.dataset import DatasetDict
 from jaxrl5.distributions import Normal
 from jaxrl5.networks import MLP, Ensemble, StateActionValue, StateValue
@@ -19,6 +21,12 @@ from jaxrl5.networks import MLP, Ensemble, StateActionValue, StateValue
 def loss(diff, expectile=0.8):
     weight = jnp.where(diff > 0, expectile, (1 - expectile))
     return weight * (diff**2)
+
+@partial(jax.jit, static_argnames=('critic_fn'))
+def compute_q(critic_fn, critic_params, observations, actions):
+    q_values = critic_fn({'params': critic_params}, observations, actions)
+    q_values = q_values.min(axis=0)
+    return q_values
 
 
 class IQLLearner(Agent):
@@ -29,6 +37,7 @@ class IQLLearner(Agent):
     tau: float
     expectile: float
     temperature: float
+    N: int
 
     @classmethod
     def create(
@@ -45,6 +54,7 @@ class IQLLearner(Agent):
         expectile: float = 0.8,
         temperature: float = 0.1,
         num_qs: int = 2,
+        N: int = 2,
     ):
 
         rng = jax.random.PRNGKey(seed)
@@ -100,6 +110,7 @@ class IQLLearner(Agent):
             discount=discount,
             expectile=expectile,
             temperature=temperature,
+            N=N,
             rng=rng,
         )
 
@@ -193,3 +204,19 @@ class IQLLearner(Agent):
         new_agent, value_info = new_agent.update_q(batch)
 
         return new_agent, {**actor_info, **critic_info, **value_info}
+    
+    def eval_actions(self, observations: np.ndarray):
+        if self.N == 0:
+            return super().eval_actions(observations)
+        
+        assert len(observations.shape) == 1
+        observations = jax.device_put(observations)
+        observations = jnp.expand_dims(observations, axis = 0).repeat(self.N, axis = 0)
+        
+        actions, rng = _sample_actions(self.rng, self.actor.apply_fn, self.actor.params, observations)
+        
+        qs = compute_q(self.target_critic.apply_fn, self.target_critic.params, observations, actions)
+        idx = jnp.argmax(qs)
+        action = actions[idx]
+        new_rng = rng
+        return np.array(action.squeeze()), self.replace(rng=new_rng)

@@ -1,7 +1,7 @@
 import d4rl
 import gym
 import numpy as np
-import mjrl
+#import mjrl
 from jaxrl5.data.dataset import Dataset
 
 
