@@ -38,6 +38,7 @@ class IQLLearner(Agent):
     expectile: float
     temperature: float
     N: int
+    do_bc: bool
 
     @classmethod
     def create(
@@ -55,6 +56,7 @@ class IQLLearner(Agent):
         temperature: float = 0.1,
         num_qs: int = 2,
         N: int = 2,
+        do_bc: bool = False,
     ):
 
         rng = jax.random.PRNGKey(seed)
@@ -112,6 +114,7 @@ class IQLLearner(Agent):
             temperature=temperature,
             N=N,
             rng=rng,
+            do_bc=do_bc,
         )
 
     def update_v(agent, batch: DatasetDict) -> Tuple[Agent, Dict[str, float]]:
