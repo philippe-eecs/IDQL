@@ -12,8 +12,8 @@ flags.DEFINE_integer('variant', 0, 'Logging interval.')
 
 
 def main(_):
-    constant_parameters = dict(project='offline_schedule_final',
-                               experiment_name='ddpm_iql',
+    constant_parameters = dict(project='offline_idql',
+                               experiment_name='idql',
                                max_steps=1500001, #Actor takes two steps per critic step
                                batch_size=2048, #Actor batch size x 2 (so really 1024), critic is fixed to 256
                                eval_episodes=50,
@@ -50,7 +50,7 @@ def main(_):
                                ))
 
     sweep_parameters = dict(
-                            seed=list(range(10)),
+                            seed=list(range(5)),
                             env_name=['walker2d-medium-v2', 'walker2d-medium-replay-v2', 'walker2d-medium-expert-v2',  
                             'halfcheetah-medium-v2', 'halfcheetah-medium-replay-v2', 'halfcheetah-medium-expert-v2',
                             'hopper-medium-v2', 'hopper-medium-replay-v2', 'hopper-medium-expert-v2', 
@@ -64,7 +64,7 @@ def main(_):
     variants = set_hyperparameters(sweep_parameters, variants, name_keys)
 
     inference_sweep_parameters = dict(
-                            N = [16, 32, 64, 128, 256],
+                            N = [1, 4, 16, 64, 256],
                             clip_sampler = [True], 
                             M = [0],
                             )
@@ -75,8 +75,6 @@ def main(_):
 
     filtered_variants = []
     for variant in variants:
-        variant['rl_config']['T'] = variant['T']
-        variant['rl_config']['beta_schedule'] = variant['beta_schedule']
         variant['inference_variants'] = inference_variants
             
         if 'antmaze' in variant['env_name']:

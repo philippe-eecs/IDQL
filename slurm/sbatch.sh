@@ -21,7 +21,7 @@ run_singularity ()
     formalid=$(( $2 * 4 + $1 ))
     singularity exec --nv --userns --writable-tmpfs -B /usr/lib64 -B /var/lib/dcv-gl --overlay $SCRATCH/singularity/overlay-50G-10M.ext3:ro $SCRATCH/singularity/cuda11.4-cudnn8-devel-ubuntu18.04.sif /bin/bash -c "
     source ~/.bashrc
-    XLA_PYTHON_CLIENT_PREALLOCATE=false python ../launcher/iql/train_iql_bc_gaussian.py \
+    XLA_PYTHON_CLIENT_PREALLOCATE=false python ../launcher/examples/train_ddpm_iql_offline.py \
     --variant $formalid
     "
 }
