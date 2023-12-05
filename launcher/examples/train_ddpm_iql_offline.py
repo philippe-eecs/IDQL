@@ -14,8 +14,8 @@ flags.DEFINE_integer('variant', 0, 'Logging interval.')
 def main(_):
     constant_parameters = dict(project='offline_schedule_final',
                                experiment_name='ddpm_iql',
-                               max_steps=1500001, #Actor takes two steps per critic step
-                               batch_size=2048, #Actor batch size x 2 (so really 1024), critic is fixed to 256
+                               max_steps=3000001, #Actor takes two steps per critic step
+                               batch_size=512,
                                eval_episodes=50,
                                log_interval=1000,
                                eval_interval=250000,
@@ -39,14 +39,11 @@ def main(_):
                                    M=0,
                                    actor_dropout_rate=0.1,
                                    actor_num_blocks=3,
-                                   actor_weight_decay=None,
                                    decay_steps=int(3e6),
                                    actor_layer_norm=True,
+                                   value_layer_norm=True,
                                    actor_tau=0.001,
-                                   actor_architecture='ln_resnet',
-                                   critic_objective='expectile',
                                    beta_schedule='vp',
-                                   actor_objective='bc',
                                ))
 
     sweep_parameters = dict(
@@ -54,8 +51,8 @@ def main(_):
                             env_name=['walker2d-medium-v2', 'walker2d-medium-replay-v2', 'walker2d-medium-expert-v2',  
                             'halfcheetah-medium-v2', 'halfcheetah-medium-replay-v2', 'halfcheetah-medium-expert-v2',
                             'hopper-medium-v2', 'hopper-medium-replay-v2', 'hopper-medium-expert-v2', 
-                            'antmaze-umaze-v0', 'antmaze-umaze-diverse-v0', 'antmaze-medium-diverse-v0', 
-                            'antmaze-medium-play-v0', 'antmaze-large-diverse-v0', 'antmaze-large-play-v0',],
+                            'antmaze-umaze-v2', 'antmaze-umaze-diverse-v2', 'antmaze-medium-diverse-v2', 
+                            'antmaze-medium-play-v2', 'antmaze-large-diverse-v2', 'antmaze-large-play-v2',],
                             )
     
 
@@ -64,7 +61,7 @@ def main(_):
     variants = set_hyperparameters(sweep_parameters, variants, name_keys)
 
     inference_sweep_parameters = dict(
-                            N = [16, 32, 64, 128, 256],
+                            N = [16, 64, 256],
                             clip_sampler = [True], 
                             M = [0],
                             )

@@ -14,8 +14,8 @@ flags.DEFINE_integer('variant', 0, 'Logging interval.')
 def main(_):
     constant_parameters = dict(project='final_finetune_2',
                                experiment_name='finetune_iql',
-                               max_steps=1000001,
-                               batch_size=2048, #Actor batch size, critic is fixed to 256
+                               max_steps=3000001,
+                               batch_size=512, #Actor batch size, critic is fixed to 256
                                eval_episodes=50,
                                log_interval=1000,
                                eval_interval=1000000,

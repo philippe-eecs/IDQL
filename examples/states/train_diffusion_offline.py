@@ -62,18 +62,6 @@ def call_main(details):
         ) and details['normalize_returns']:
             ds.normalize_returns()
     
-    unsquashed_actions = np.arctanh(ds.dataset_dict['actions'])
-    unsquashed_action_mean = np.mean(unsquashed_actions, axis = 0)
-    unsquashed_action_std = np.std(unsquashed_actions, axis = 0)
-    
-    if details['unsquash_actions']:
-        ds.dataset_dict['actions'] = unsquashed_actions
-        unsquashed_actions -= unsquashed_action_mean
-        unsquashed_actions /= unsquashed_action_std
-    else:
-        unsquashed_action_mean = None
-        unsquashed_action_std = None
-    
     ds, ds_val = ds.split(0.95)
     sample = ds.sample_jax(details['batch_size'], keys=keys)
 
@@ -83,9 +71,10 @@ def call_main(details):
         
         if i % details['log_interval'] == 0:
             val_sample = ds_val.sample(details['batch_size'], keys=keys)
-            agent, val_info = agent.eval_loss(val_sample)
+            _, val_info = agent.update(val_sample)
             wandb.log({f"train/{k}": v for k, v in info.items()}, step=i)
             wandb.log({f"val/{k}": v for k, v in val_info.items()}, step=i)
+            #TODO: Save BC Actor weights for lowest validation loss
         
         if i % details['eval_interval'] == 0 and i > 0:
             for inference_params in details['inference_variants']:
@@ -95,17 +84,9 @@ def call_main(details):
                 )
                 if 'binary' not in details['env_name']:
                     eval_info["return"] = env.get_normalized_score(eval_info["return"]) * 100.0
-                wandb.log({f"eval/{inference_params}_{k}": v for k, v in eval_info.items()}, step=i)
-            
+                wandb.log({f"eval/{inference_params}_{k}": v for k, v in eval_info.items()}, step=i)          
             agent.replace(**details['training_time_inference_params'])
             
-            eval_info = implicit_evaluate(agent, env, details['eval_episodes'], save_video=details['save_video'])
-            if 'binary' not in details['env_name']:
-                eval_info["return"] = env.get_normalized_score(eval_info["return"]) * 100.0
-            wandb.log({f"eval/implicit_{k}": v for k, v in eval_info.items()}, step=i)
-            
-            
-    
     if details['online_max_steps'] > 0:
         online_replay_buffer = ReplayBuffer(env.observation_space, env.action_space,
                                     details['online_max_steps'])
@@ -115,12 +96,7 @@ def call_main(details):
         observation, done = env.reset(), False
         for i in tqdm(range(1, details['online_max_steps']),
                         smoothing=0.1):
-
-            if details['sample_implicit_policy']:
-                action, agent = agent.sample_implicit_policy(observation)
-            else:
-                action, agent = agent.eval_actions(observation)
-
+            action, agent = agent.eval_actions(observation)
             next_observation, reward, done, info = env.step(action)
 
             if not done or 'TimeLimit.truncated' in info:
@@ -149,14 +125,6 @@ def call_main(details):
                 batch = merge_batch(online_batch, offline_batch)
                 agent, info = agent.critic_update(batch)
 
-                if details['train_actor_finetuning']:
-                    online_batch = online_replay_buffer.sample(details['batch_size']//2)
-                    offline_batch = ds.sample(details['batch_size']//2)
-                    batch = merge_batch(online_batch, offline_batch)
-
-                    agent, actor_info = agent.actor_update(batch)
-                    info = {**info, **actor_info}
-
                 if i % details['log_interval'] == 0:
                     info = jax.device_get(info)
                     wandb.log({f'online_train/{k}': v for k, v in info.items()}, step= i + details['max_steps'])
@@ -172,7 +140,3 @@ def call_main(details):
                         wandb.log({f"online_eval/{inference_params}_{k}": v for k, v in eval_info.items()}, step=i + details['max_steps'])
                     
                     agent.replace(**details['training_time_inference_params'])
-
-
-if __name__ == "__main__":
-    app.run(main)

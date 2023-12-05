@@ -93,7 +93,7 @@ def ddpm_sampler(actor_apply_fn, actor_params, T, rng, act_dim, observations, al
         return (current_x, rng), ()
 
     key, rng = jax.random.split(rng, 2)
-    input_tuple, () = jax.lax.scan(fn, (jax.random.normal(key, (batch_size, act_dim)), rng), jnp.arange(T-1, -1, -1), unroll = 5)
+    input_tuple, () = jax.lax.scan(fn, (jax.random.normal(key, (batch_size, act_dim)), rng), jnp.arange(T-1, -1, -1))
 
     for _ in range(repeat_last_step):
         input_tuple, () = fn(input_tuple, 0)
